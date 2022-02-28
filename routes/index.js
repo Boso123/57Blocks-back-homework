@@ -16,7 +16,7 @@ router.get('/db/status', function (req, res, next) {
 
 router.get('/db/collection', async function (req, res, next) {
   var mongo = new Mongo();
-  var data = await mongo.create("pokemon", {name: "Pikachu", nivel: 1, type: "Water", image: ""});
+  var data = await mongo.find('pokemon', {name: 'Pikachu'});
   res.status(200).json(response(data, "success", "response"));
 });
 
