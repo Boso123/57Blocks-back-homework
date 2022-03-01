@@ -10,7 +10,7 @@ function standardResponse(data, type, code="response", information={}) {
       return {
         data: null,
         code: code,
-        error: information
+        error: data
       }
   }
 }

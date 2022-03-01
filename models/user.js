@@ -5,7 +5,8 @@ const userSchema = new mongoose.Schema({
   password: String,
   secret: String,
   lastConnection: { type: Date, default: Date.now },
-  pokemons: []
+  pokemons: [],
+  kid: String
 });
 
 module.exports = userSchema;

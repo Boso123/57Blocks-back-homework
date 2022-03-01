@@ -16,6 +16,11 @@ class MongoConnection {
     this.pokemon = mongoose.model('pokemon', pokemonSchema);
   }
 
+  /**
+   * 
+   * @param {*} schemaName 
+   * @returns 
+   */
   getSchema(schemaName) {
     switch (schemaName) {
       case "user":
@@ -27,6 +32,12 @@ class MongoConnection {
     }
   }
 
+  /**
+   * 
+   * @param {*} schemaType 
+   * @param {*} query 
+   * @returns 
+   */
   async find(schemaType, query) {
     var schema = this.getSchema(schemaType);
 
@@ -34,12 +45,25 @@ class MongoConnection {
     return response;
   }
 
+  /**
+   * 
+   * @param {*} schemaType 
+   * @param {*} query 
+   * @returns 
+   */
   async delete(schemaType, query) {
     var schema = this.getSchema(schemaType);
     const response = schema.deleteMany({query});
     return response;
   }
 
+  /**
+   * 
+   * @param {*} schemaType 
+   * @param {*} query 
+   * @param {*} replaceQuery 
+   * @returns 
+   */
   async update(schemaType, query, replaceQuery) {
     var schema = this.getSchema(schemaType);
     const response = await schema.updateMany(query, replaceQuery);
@@ -50,6 +74,12 @@ class MongoConnection {
     }
   }
 
+  /**
+   * 
+   * @param {*} schemaType 
+   * @param {*} query 
+   * @returns 
+   */
   async create(schemaType, query) {
     var schema = this.getSchema(schemaType);
     var element = new schema(query);
@@ -57,6 +87,9 @@ class MongoConnection {
     return response;
   }
 
+  /**
+   * 
+   */
   async connect() {
     await mongoose.connect(this.url);
     logger.info("Connection successful")
