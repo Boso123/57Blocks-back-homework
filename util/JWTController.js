@@ -45,7 +45,7 @@ class JWTController {
       if (payload.exp < (Date.now() / 1000)) throw "Token expired";
 
       return {
-        email: payload.email
+        email: payload.sub
       };
     } catch (error) {
       throw error;

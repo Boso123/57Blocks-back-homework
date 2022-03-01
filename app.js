@@ -1,7 +1,8 @@
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-const httpLogger = require('./util/logger/httpLogger')
+const httpLogger = require('./util/logger/httpLogger');
+const middleware = require('./util/validateUser')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -19,9 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/', indexRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/pokemon', pokemonRouter, function(req, res, next) {
-  console.log("Yo si funcionar");
-});
+app.use('/api/pokemon', middleware , pokemonRouter);
 app.use('/api/auth', authRouter);
 
 module.exports = app;
