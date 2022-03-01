@@ -5,6 +5,8 @@ const httpLogger = require('./util/logger/httpLogger')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var pokemonRouter = require('./routes/pokemon');
+var authRouter = require('./routes/auth');
 
 var app = express();
 var router = express.Router();
@@ -17,5 +19,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/', indexRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/pokemon', pokemonRouter, function(req, res, next) {
+  console.log("Yo si funcionar");
+});
+app.use('/api/auth', authRouter);
 
 module.exports = app;

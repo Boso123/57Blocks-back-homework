@@ -15,7 +15,7 @@ class JWTController {
   async signingUser(userToSign) {
     try {
       var userKid = await this.getUserInformation(userToSign.email);
-      var key = await this.#retriveKey(userKid);
+      var key = await this.#retriveKey(userKid, userToSign.email);
       const opt = { compact: true, jwk: key, fields: { typ: 'jwt' } };
       const payload = JSON.stringify({
         exp: Math.floor((Date.now() + this.#ms(30)) / 1000),
@@ -71,30 +71,30 @@ class JWTController {
   async getUserInformation(email) {
     const mongo = new Mongo();
     try {
-      const user = mongo.find('user', { email: email });
-      return user.kid;
+      const user = await mongo.find('user', { email: email });
+      return user[0].kid;
     } catch (error) {
       return null;
     }
   }
 
-  async #retriveKey(kid) {
+  async #retriveKey(kid, email) {
     // si esta vencido generar un nuevo token borrar viejo crear nuevo.
     //Guardar el kid
-    const mongo = new Mongo();
-    var key = this.keyStore.get(kid);
-
-    if (key) {
+    
+    if (kid) {
+      var key = this.keyStore.get({ kid: kid });
       this.keyStore.remove(key);
     }
-
-    key = await this.#generate_key(email);
-    mongo.update('user', {kid: kid}, {kid: key.kid});
+    
+    key = await this.#generate_key();
+    const mongo = new Mongo();
+    mongo.update('user', { email: email }, { kid: key.kid, lastConnection: Date.now()});
 
     return key;
   }
 
-  async #generate_key(email) {
+  async #generate_key() {
     try {
       var key = await this.keyStore.generate('RSA', 2048, { alg: 'RS256', use: 'sig' });
       fs.writeFileSync(this.#keyStoreFile, JSON.stringify(this.keyStore.toJSON(true)));
