@@ -1,26 +1,21 @@
 var express = require('express');
 var router = express.Router();
 const Mongo = require('../util/mongoConnection');
+const response = require('../util/standardResponse')
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+router.get('/', async function(req, res, next) {
+  const userEmail = res.locals.userEmail;
 
-router.get('/:userId', function(req, res, next) {
+  const mongo = new Mongo();
 
-});
+  var user = await mongo.find('user',{email: userEmail});
+  user = user[0];
 
-router.post('/add', function(req, res, next) {
-
-});
-
-router.put('/update/:userId', function(req, res, next) {
-
-});
-
-router.delete('/remove/:userId', function(req, res, next) {
-
+  res.status(200).json(response({
+    email: user.email,
+    lastConnection: user.lastConnection
+  }, 'success', 'retrived'));
 });
 
 module.exports = router;

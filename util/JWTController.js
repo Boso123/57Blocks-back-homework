@@ -12,13 +12,18 @@ class JWTController {
 
   constructor() {/** */ }
 
+  /**
+   * Generates a new token for a user.
+   * @param {*} userToSign Email of the user to generate the new token
+   * @returns `string` JWT token as string
+   */
   async signingUser(userToSign) {
     try {
       var userKid = await this.getUserInformation(userToSign.email);
       var key = await this.#retriveKey(userKid, userToSign.email);
       const opt = { compact: true, jwk: key, fields: { typ: 'jwt' } };
       const payload = JSON.stringify({
-        exp: Math.floor((Date.now() + this.#ms(30)) / 1000),
+        exp: Math.floor((Date.now() + this.#ms(20)) / 1000),
         iat: Math.floor(Date.now() / 1000),
         sub: userToSign.email
       });
@@ -33,10 +38,20 @@ class JWTController {
     }
   }
 
+  /**
+   * Convert pass minutes in milliseconds
+   * @param {*} minutes Minutes to convert
+   * @returns `Number` milliseconds
+   */
   #ms(minutes) {
     return minutes * 60000;
   }
 
+  /**
+   * Validates a JWT token
+   * @param {*} token JWT token
+   * @returns email of the user in the token
+   */
   async validateKey(token) {
     try {
       const validate = await JWS.createVerify(this.keyStore).verify(token);
@@ -52,6 +67,9 @@ class JWTController {
     }
   }
 
+  /**
+   * Charge in the system credentials saved in the internal storage
+   */
   async initializeKeyStore() {
     if (!fs.existsSync(this.#keyStoreFile)) {
       if (!fs.existsSync(this.#certDir)) {
@@ -62,12 +80,17 @@ class JWTController {
       fs.writeFileSync(this.#keyStoreFile, JSON.stringify(this.keyStore.toJSON(true)))
     }
     else {
-      logger.info("Keystore finded importing")
+      logger.info("Keystore founded importing")
       const ks = fs.readFileSync(join('.cert', 'keystore.json'));
       this.keyStore = await JWK.asKeyStore(ks.toString());
     }
   }
-
+  
+  /**
+   * Retrives user key kid
+   * @param {*} email Email to find user
+   * @returns kid of the key 
+   */
   async getUserInformation(email) {
     const mongo = new Mongo();
     try {
@@ -78,10 +101,13 @@ class JWTController {
     }
   }
 
-  async #retriveKey(kid, email) {
-    // si esta vencido generar un nuevo token borrar viejo crear nuevo.
-    //Guardar el kid
-    
+  /**
+   * Generates a new key
+   * @param {*} kid previusly key of the user
+   * @param {*} email User to generate the key
+   * @returns A new JWK key for the user
+   */
+  async #retriveKey(kid, email) {   
     if (kid) {
       var key = this.keyStore.get({ kid: kid });
       this.keyStore.remove(key);
@@ -94,6 +120,10 @@ class JWTController {
     return key;
   }
 
+  /**
+   * Create a new RSA key and saved in the storage
+   * @returns New key
+   */
   async #generate_key() {
     try {
       var key = await this.keyStore.generate('RSA', 2048, { alg: 'RS256', use: 'sig' });

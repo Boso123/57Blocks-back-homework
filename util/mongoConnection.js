@@ -17,9 +17,9 @@ class MongoConnection {
   }
 
   /**
-   * 
-   * @param {*} schemaName 
-   * @returns 
+   * Retrives the needed schema
+   * @param {*} schemaName name of the schema needed
+   * @returns mongoose schema
    */
   getSchema(schemaName) {
     switch (schemaName) {
@@ -33,10 +33,10 @@ class MongoConnection {
   }
 
   /**
-   * 
-   * @param {*} schemaType 
-   * @param {*} query 
-   * @returns 
+   * Find a document in the database
+   * @param {*} schemaType name of the schema
+   * @param {*} query Query to run in the database
+   * @returns Founded documents
    */
   async find(schemaType, query) {
     var schema = this.getSchema(schemaType);
@@ -46,10 +46,10 @@ class MongoConnection {
   }
 
   /**
-   * 
-   * @param {*} schemaType 
-   * @param {*} query 
-   * @returns 
+   * Delete document for database
+   * @param {*} schemaType name of the schema
+   * @param {*} query Query to execute in databsae
+   * @returns Number of documents affected
    */
   async delete(schemaType, query) {
     var schema = this.getSchema(schemaType);
@@ -58,11 +58,11 @@ class MongoConnection {
   }
 
   /**
-   * 
-   * @param {*} schemaType 
-   * @param {*} query 
-   * @param {*} replaceQuery 
-   * @returns 
+   * Update a document in the database
+   * @param {*} schemaType name of the schema
+   * @param {*} query query to find documents to chanfe
+   * @param {*} replaceQuery Change to made in documents
+   * @returns Number of documents affecter
    */
   async update(schemaType, query, replaceQuery) {
     var schema = this.getSchema(schemaType);
@@ -75,10 +75,10 @@ class MongoConnection {
   }
 
   /**
-   * 
-   * @param {*} schemaType 
-   * @param {*} query 
-   * @returns 
+   * Creates a new document in databse
+   * @param {*} schemaType name of the schema
+   * @param {*} query query of document to save
+   * @returns document saved
    */
   async create(schemaType, query) {
     var schema = this.getSchema(schemaType);
@@ -88,7 +88,7 @@ class MongoConnection {
   }
 
   /**
-   * 
+   * Connect to database
    */
   async connect() {
     await mongoose.connect(this.url);
