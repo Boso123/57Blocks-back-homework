@@ -6,7 +6,7 @@ const pokemonSchema = require('../models/pokemon');
 const res = require('express/lib/response');
 
 class MongoConnection {
-  url = "mongodb+srv://blocks:57blocks@pokemons.haboa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+  url = process.env.DB;
   user = null;
   pokemon = null;
 

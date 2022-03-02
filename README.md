@@ -28,7 +28,7 @@ Also the project contains a enviroment variable to the database called `DB`. In 
 
 ## Deploy
 
-The project is deploy in heroku in the url 
+The project is deploy in heroku in the [URL](https://homework57blocks.herokuapp.com/)
 
 ## API documentation
 
